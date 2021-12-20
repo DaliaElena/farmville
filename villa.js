@@ -1,5 +1,17 @@
+document.addEventListener("keydown" , moverFarmer);
+var teclas = {
+	UP: 38,
+	DOWN: 40,
+	LEFT: 37,
+	RIGHT: 39
+};
+
 var vp =document.getElementById("villaplatzi");
 var papel = vp.getContext("2d");
+var fondo = new Image();
+fondo.addEventListener("load", cargarFondo);
+
+
 
 var x = aleatorio (0,420);
 var y = aleatorio (0,420);
@@ -8,6 +20,8 @@ var fondo = {
 	url: "tile.png",
 	cargaOK: false
 }
+
+
 
 var vaca = {
 	url: "vaca.png",
@@ -30,14 +44,20 @@ var farmer = {
 	cargaOK: false
 }
 
+
+/*Creo una variable para que haga random en la primera pasada y poder agregar un "else"  para que las pasadas posteriores no sean random*/
+var primeraPasadaVacas = true;
+var primeraPasadaPollos = true;
+var primeraPasadaCerdos = true;
+/*Creo dos arreglos para recordar las posiciones de las vacas y los pollos en pasadas posteriores a la primera*/
+var todasLasVacas = [];
+var todosLosPollos = [];
+var todosLosCerdos = [];
+
+
 var cantidad = aleatorio(5,15);
 
-var teclas = {
-	UP: 38,
-	DOWN: 40,
-	LEFT: 37,
-	RIGHT: 39
-};
+
 
 
 
@@ -61,7 +81,6 @@ farmer.imagen = new Image();
 farmer.imagen.src = farmer.url;
 farmer.imagen.addEventListener("load", cargarFarmer);
 
-document.addEventListener("keydown" , moverFarmer);
 
 
 function cargarFondo ()
@@ -108,104 +127,116 @@ function dibujar ()
 	{
 		papel.drawImage(fondo.imagen, 0,0);
 	}
+  if(vaca.cargaOK)
+  {
+    if (primeraPasadaVacas)
+    {
+        for(var v=0; v < 10; v++)
+        {
+        var x = aleatorio(0,7);
+        var y = aleatorio(0,7);
+        var x = x * 60;
+        var y = y * 60;
+        papel.drawImage(vaca.imagen, x, y);
+        /*Agrego las posiciones x e y de cada vaca en el arreglo*/
+        todasLasVacas.push(x, y);
+        }
+        primeraPasadaVacas = false;
+    }
+    else {
+      for (var i = 0; i < todasLasVacas.length; i=i+2)
+      {
+        x=todasLasVacas[i];
+        y=todasLasVacas[i+1];
+        papel.drawImage(vaca.imagen, x, y);
+      }
+    }
+  }
+  if(cerdo.cargaOK)
+  {
+    if (primeraPasadaCerdos)
+    {
+        for(var v=0; v < 10; v++)
+        {
+        var x = aleatorio(0,7);
+        var y = aleatorio(0,7);
+        var x = x * 60;
+        var y = y * 60;
+        papel.drawImage(cerdo.imagen, x, y);
+        /*Agrego las posiciones x e y de cada cerdo en el arreglo*/
+        todosLosCerdos.push(x, y);
+        }
+        primeraPasadaCerdos = false;
+    }
+    else {
+      for (var i = 0; i < todosLosCerdos.length; i=i+2)
+      {
+        x=todosLosCerdos[i];
+        y=todosLosCerdos[i+1];
+        papel.drawImage(cerdo.imagen, x, y);
+      }
+    }
+  }
 
-	if(vaca.cargaOK)
-	{
-		
-		console.log(cantidad);
-		for(var v=0; v < cantidad; v++)
-		{
-			var x = aleatorio(0, 7);
-			var y = aleatorio(0, 7);
-			var x = x * 60;
-			var y = y * 60;
-			papel.drawImage(vaca.imagen, x, y);
-		}
-		
-	}
+	  if(pollo.cargaOK)
+  {
+    if (primeraPasadaPollos)
+    {
+        for(var v=0; v < 7; v++)
+        {
+        var x = aleatorio(0,7);
+        var y = aleatorio(0,7);
+        var x = x * 60;
+        var y = y * 60;
+        papel.drawImage(pollo.imagen, x, y);
+        /*Agrego las posiciones x e y de cada pollo en el arreglo*/
+        todosLosPollos.push(x, y);
+        }
+        primeraPasadaPollos = false;
+    }
+    else {
+      for (var i = 0; i < todosLosPollos.length; i=i+2)
+      {
+        x=todosLosPollos[i];
+        y=todosLosPollos[i+1];
+        papel.drawImage(pollo.imagen, x, y);
+      }
+    }
+  }
 
-	if(cerdo.cargaOK)
-	{
-		
-		console.log(cantidad);
-		for(var v=0; v < cantidad; v++)
-		{
-			var x = aleatorio(0, 7);
-			var y = aleatorio(0, 7);
-			var x = x * 60;
-			var y = y * 60;
-			papel.drawImage(cerdo.imagen, x, y);
-		}
-		
-	}
-
-	if(pollo.cargaOK)
-	{
-		
-		console.log(cantidad);
-		for(var v=0; v < cantidad; v++)
-		{
-			var x = aleatorio(0, 7);
-			var y = aleatorio(0, 7);
-			var x = x * 60;
-			var y = y * 60;
-			papel.drawImage(pollo.imagen, x, y);
-		}
-		
-	}
-
-	if(farmer.cargaOK)
-	{
-		
-		console.log(cantidad);
-		for(var v=0; v < 1; v++)
-		{
-			var x = aleatorio(0, 7);
-			var y = aleatorio(0, 7);
-			var x = x * 60;
-			var y = y * 60;
-			papel.drawImage(farmer.imagen, x, y);
-		}
-		
-	}
+	if(farmer.cargaOK){
+    movimiento = 7;
+      moverFarmer(movimiento);
+        }
 
 
 }
 
 
-function moverFarmer(evento)
-
+function moverFarmer (evento)
 {
-
-	// farmer.cargaOK = true;
-	// dibujar();
-
-	var movimiento = 5;
-
-	
-
-	switch(evento.keyCode)
-	{
-		case teclas.UP:
-			cargarFarmer(x, y, x, y - movimiento);
-			y = y - movimiento;
-		break;
-
-		case teclas.DOWN:
-
-			cargarFarmer(x, y, x, y + movimiento);
-			y = y + movimiento;
-		break;
-		case teclas.LEFT:
-
-			cargarFarmer(x, y, x - movimiento, y);
-			x = x - movimiento;
-		break;
-		case teclas.RIGHT:
-			cargarFarmer(x, y, x + movimiento, y);
-			x = x + movimiento;
-		break;
-	}
+  var movimiento = 7;
+  switch (evento.keyCode)
+  {
+    case teclas.UP:
+    y = y - movimiento;
+    dibujar();
+    break;
+    case teclas.DOWN:
+    y = y + movimiento;
+    dibujar();
+    break;
+    case teclas.LEFT:
+    x = x - movimiento;
+    dibujar();
+    break;
+    case teclas.RIGHT:
+    x = x + movimiento;
+    dibujar();
+    break;
+    default:
+    papel.drawImage(farmer.imagen, x, y);
+  }
 }
 
 
